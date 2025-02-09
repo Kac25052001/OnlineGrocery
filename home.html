@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Grocery | Home</title>
+    <link rel="stylesheet" href="home_style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="cart" style="
+        z-index: 10;
+        position: fixed;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,0.5);
+        width: 100vw;
+        height: 100vh;">
+        <div id="cart-items">
+            <h2>Cart Items</h2>
+            <div id="items-display"></div>
+        </div>
+        <div id="cart-summary">
+            <h2>Cart Summary</h2>
+            <div id="summary-display"></div>
+        </div>
+        <div id="order-summary">
+            <h1 style="color: #00c010; margin-bottom: 30px; text-align: center;">Order Placed Successfully</h1>
+            <div id="summary"></div>
+        </div>
+    </div>
+
+    <div id="popup" style="
+        z-index: 10;
+        position: fixed;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,0.5);
+        width: 100vw;
+        height: 100vh;">
+        <form id="updateDetails">
+            <div class="wrapper">
+                <h1>Your Profile</h1>
+                <p id="id-display">Customer ID: </p>
+                <hr>
+                <label for="name"><b>Name</b></label>
+                <input type="text" placeholder="Enter Name" name="name" id="name" required>
+                
+                <label for="email"><b>Email</b></label>
+                <input type="email" placeholder="Enter Email" name="email" id="email" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+                <label for="address"><b>Address</b></label>
+                <textarea placeholder="Enter Address" name="address" id="address" rows="2" required></textarea>
+
+                <label for="mobile"><b>Contact Number</b></label>
+                <input type="tel" placeholder="Enter Contact Number" name="mobile" id="mobile" required>
+
+                <button type="submit" class="actionbtn">Update Details</button>
+            </div>
+        </form>
+    </div>
+
+    <nav>
+        <ul>
+            <li><a href="javascript:void(0);" id="home_nav">Home</a></li>
+            <li><a href="javascript:void(0);" id="cart_nav">Cart</a></li>
+            <li><a href="javascript:void(0);" id="profile_nav">Profile</a></li>
+            <li><a href="javascript:void(0);" id="logout_nav">Logout</a></li>
+        </ul>
+    </nav>
+    <h1 class="display">Hello <span id="name-display"></span></h1>
+    <h1 class="display">Welcome to Online Grocery</h1>
+    <div class="products-wrapper"></div>
+    <script>
+        const prodductsContainer = document.getElementsByClassName('products-wrapper')[0];
+        const productHTML = `
+            <div class="card">
+                <img src="image.png" alt="Product Image">
+                <h1>Product Title</h1>
+                <div class="button"><a href="javascript:void(0);">₹1000</a><a href="javascript:void(0);">ADD TO CART</a></div>
+            </div>
+        `;
+
+        const products = [
+            {productName: "Banana", price: 10.0},
+            {productName: "Apple", price: 50.0},
+            {productName: "Egg", price: 10.0},
+            {productName: "Bread", price: 30.0},
+            {productName: "Pineapple", price: 70.0},
+            {productName: "Wafers", price: 10.0},
+            {productName: "Jam", price: 90.0},
+            {productName: "Butter", price: 120.0},
+            {productName: "Cereals", price: 140.0},
+            {productName: "Oats", price: 210.0},
+        ]
+
+        for (let i=0; i<products.length; i++) {
+            prodductsContainer.innerHTML += `
+                <div class="card">
+                    <img src="image.png" alt="Product Image">
+                    <h1>${products[i].productName}</h1>
+                    <div class="button"><a href="javascript:void(0);">₹ ${products[i].price}</a><a href="javascript:localStorage.setItem('cart', localStorage.getItem('cart') + ${i} + ',');">ADD TO CART</a></div>
+                </div>
+            `;
+        };
+
+        if (localStorage) {
+            document.getElementById('name-display').innerHTML = localStorage.getItem('name');
+        }
+
+        document.getElementById('home_nav').addEventListener('click', function(event){
+            event.preventDefault();
+            window.location.href = 'home.html';
+        });
+
+        document.getElementById('logout_nav').addEventListener('click', function(event){
+            event.preventDefault();
+            window.location.href = 'login.html';
+        });
+
+        document.getElementById('profile_nav').addEventListener('click', function(event){
+            document.getElementById('popup').style.display = 'flex';
+        });
+        
+        document.getElementById('popup').addEventListener('click', function(event){
+            if (event.target.id === 'popup') {
+                document.getElementById('popup').style.display = 'none';
+            }
+        });
+
+        if (localStorage) {
+            document.getElementById('id-display').innerHTML += localStorage.getItem('id');
+            document.getElementById('name').value = localStorage.getItem('name');
+            document.getElementById('email').value = localStorage.getItem('email');
+            document.getElementById('password').value = localStorage.getItem('password');
+            document.getElementById('mobile').value = localStorage.getItem('mobile');
+            document.getElementById('address').value = localStorage.getItem('address');
+        }
+
+        document.getElementById('updateDetails').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+
+            if (!/^[A-Za-z\s]+$/.test(name)) {
+                alert('Customer name must have alphabets only');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                alert('Email id not valid');
+                return;
+            }
+
+            if (password.length < 5 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+                alert('Password doesn\'t match the criteria');
+                return;
+            }
+
+            if (address === '') {
+                alert('Address must not be black or null');
+                return;
+            }
+
+            if (!/[0-9]+$/.test(mobile)) {
+                alert('Contact number must not have any alphabets');
+                return;
+            }
+
+            alert('Details updated successfully');
+            this.submit();
+
+            if (localStorage) {
+                localStorage.setItem('name', name);
+                localStorage.setItem('email', email);
+                localStorage.setItem('address', address);
+                localStorage.setItem('password', password);
+                localStorage.setItem('mobile', mobile);
+                localStorage.setItem('id', customerId);
+            }
+
+            document.getElementById('popup').style.display = 'none';
+        });
+
+        document.getElementById('cart_nav').addEventListener('click', function(event) {
+            document.getElementById('cart').style.display = 'flex';
+            document.getElementById('cart-items').style.display = 'flex';
+            document.getElementById('cart-summary').style.display = 'flex';
+            document.getElementById('order-summary').style.display = 'none';
+            loadCartItems();
+            loadCartSummary();
+            // checkout();
+        });
+        
+        document.getElementById('cart').addEventListener('click', function(event){
+            if (event.target.id === 'cart') {
+                document.getElementById('cart').style.display = 'none';
+            }
+        });
+
+        function loadCartItems() {
+            const cartItems = localStorage.getItem('cart').split(",");
+            cartItems.pop();
+            if (cartItems[0] == "" || cartItems.length == 0) {
+                document.getElementById('items-display').innerHTML = "Cart is empty!";
+                localStorage.setItem('cart', "");
+                return;
+            }
+            document.getElementById('items-display').innerHTML = "";
+            for (let i=0; i<cartItems.length; i++) {
+                const product = products[parseInt(cartItems[i])];
+                document.getElementById('items-display').innerHTML += `
+                    <div class="item">
+                        <h3>${i + 1}. ${product.productName} (Price: ${product.price})</h3>
+                        <button id="delete" onclick="removeItemFromCart(${i})">Delete</button>
+                    </div>
+                `;
+            }
+        }
+
+        function loadSummaryTable(tagId) {
+            
+        }
+
+        function loadCartSummary() {
+            const cartItems = localStorage.getItem('cart').split(",");
+            cartItems.pop();
+            if (cartItems[0] == "" || cartItems.length == 0) {
+                document.getElementById('summary-display').innerHTML = "Cart is empty!";
+                return;
+            }
+            document.getElementById('summary-display').innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            `;
+            document.getElementById('tbody').innerHTML = "";
+            var total = 0;
+            var totalItems = 0;
+            const cart = frequencies(cartItems);
+            for (let i=0; i<products.length; i++) {
+                if (cart[i]) {
+                    const product = products[i];
+                    document.getElementById('tbody').innerHTML += `
+                            <tr>
+                                <td>${product.productName}</td>
+                                <td>${cart[i]}</td>
+                                <td>${product.price}</td>
+                            </tr>
+                    `;
+                    total += product.price * cart[i];
+                    totalItems += cart[i];
+                }
+            }
+            // for (let i=0; i<cartItems.length; i++) {
+            //     const product = products[parseInt(cartItems[i])];
+            //     document.getElementById('tbody').innerHTML += `
+            //             <tr>
+            //                 <td>${product.productName}</td>
+            //                 <td>${product.price}</td>
+            //             </tr>
+            //     `;
+            //     total += product.price
+            // }
+            document.getElementById('tbody').innerHTML += `
+                <tr>
+                    <td style="font-weight: bolder; text-align: end;">Total</td>
+                    <td style="font-weight: bolder;">${totalItems}</td>
+                    <td style="font-weight: bolder;">${total}</td>
+                </tr>
+            `;
+            document.getElementById('summary-display').innerHTML += `<button type="button" id="checkout" style="align-self: center;" onclick="checkout()">CHECKOUT</button>`;
+        }
+
+        function checkout() {
+            const cartItems = localStorage.getItem('cart').split(",");
+            cartItems.pop();
+            document.getElementById('cart-items').style.display = 'none';
+            document.getElementById('cart-summary').style.display = 'none';
+            document.getElementById('order-summary').style.display = 'flex';
+            document.getElementById('summary').innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody2"></tbody>
+                </table>
+            `;
+            document.getElementById('tbody2').innerHTML = "";
+            var total = 0;
+            var totalItems = 0;
+            const cart = frequencies(cartItems);
+            for (let i=0; i<products.length; i++) {
+                if (cart[i]) {
+                    const product = products[i];
+                    document.getElementById('tbody2').innerHTML += `
+                            <tr>
+                                <td>${product.productName}</td>
+                                <td>${cart[i]}</td>
+                                <td>${product.price}</td>
+                            </tr>
+                    `;
+                    total += product.price * cart[i];
+                    totalItems += cart[i];
+                }
+            }
+            document.getElementById('tbody2').innerHTML += `
+                <tr>
+                    <td style="font-weight: bolder; text-align: end;">Total</td>
+                    <td style="font-weight: bolder;">${totalItems}</td>
+                    <td style="font-weight: bolder;">${total}</td>
+                </tr>
+            `;
+            localStorage.setItem('cart', "");
+        }
+
+        const frequencies = arr =>
+            arr.reduce((a, v) => {
+                a[v] = (a[v] ?? 0) + 1;
+                return a;
+            }, {});
+
+        function removeItemFromCart(ind) {
+            const cartItems = localStorage.getItem('cart').split(",");
+            cartItems.pop();
+            cartItems.splice(ind, 1);
+            localStorage.setItem('cart', cartItems.toString() + ',');
+            loadCartItems();
+            loadCartSummary();
+        }
+    </script>
+</body>
+</html>

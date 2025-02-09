@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Grocery | Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <form action="login.html" id="registerForm">
+            <div class="wrapper">
+                <h1>Register Yourself</h1>
+                <p>Please fill in the details to create an account.</p>
+                <hr>
+                <label for="name"><b>Name</b></label>
+                <input type="text" placeholder="Enter Name" name="name" id="name" required>
+                
+                <label for="email"><b>Email</b></label>
+                <input type="email" placeholder="Enter Email" name="email" id="email" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+                <label for="address"><b>Address</b></label>
+                <textarea placeholder="Enter Address" name="address" id="address" rows="2" required></textarea>
+
+                <label for="mobile"><b>Contact Number</b></label>
+                <input type="tel" placeholder="Enter Contact Number" name="mobile" id="mobile" required>
+
+                <button type="submit" class="actionbtn">Register</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+
+            if (!/^[A-Za-z\s]+$/.test(name)) {
+                alert('Customer name must have alphabets only');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                alert('Email id not valid');
+                return;
+            }
+
+            if (password.length < 5 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+                alert('Password doesn\'t match the criteria');
+                return;
+            }
+
+            if (address === '') {
+                alert('Address must not be black or null');
+                return;
+            }
+
+            if (!/[0-9]+$/.test(mobile)) {
+                alert('Contact number must not have any alphabets');
+                return;
+            }
+
+            const customerId = Math.floor(10000 + Math.random() * 90000);
+            alert('Customer Registation Successful! Customer ID: ' + customerId);
+            this.submit();
+
+            if (localStorage) {
+                localStorage.setItem('name', name);
+                localStorage.setItem('email', email);
+                localStorage.setItem('address', address);
+                localStorage.setItem('password', password);
+                localStorage.setItem('mobile', mobile);
+                localStorage.setItem('id', customerId);
+            }
+        })
+    </script>
+</body>
+</html>

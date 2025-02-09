@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Grocery | Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <form action="login.html" id="loginForm">
+            <div class="wrapper">
+                <h1>Register Yourself</h1>
+                <p>Please fill in the details to login to your account.</p>
+                <hr>
+                <label for="custid"><b>Customer ID</b></label>
+                <input type="text" placeholder="Enter Customer ID" name="custid" id="custid" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+                <button type="submit" class="actionbtn">Login</button>
+
+                <h3>Not a user? <a href="register.html">Register Now</a>.</h3>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const custid = document.getElementById('custid').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            const storedID = localStorage.getItem('id');
+            const storedPass = localStorage.getItem('password');
+
+            if (custid !== storedID) {
+                alert('ID not valid');
+                return;
+            } else if (password !== storedPass) {
+                alert('Password not valid');
+                return;
+            } else if (custid === storedID && password === storedPass) {
+                alert('Login successful');
+                window.location.href = 'home.html';
+            } else {
+                alert('Invalid Customer ID or Password');
+            }
+        })
+    </script>
+</body>
+</html>
